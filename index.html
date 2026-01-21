@@ -1,0 +1,758 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Data2Insights</title>
+     <link rel="icon" type="image/png" href="image/logo.png">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.26.0/plotly.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #030406;
+            color: #fff;
+            overflow-x: hidden;
+        }
+
+        header {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 20px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background: rgba(10 10 10 / 14%);
+            backdrop-filter: blur(10px);
+        }
+
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 2px;
+        }
+
+        nav a {
+            color: #fff;
+            text-decoration: none;
+            margin-left: 30px;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        nav a:hover {
+            color: #f39c12;
+        }
+
+        #hero {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            padding: 0 50px;
+            overflow: hidden;
+        }
+
+        #particles-video {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            min-width: 100%;
+            min-height: 100%;
+            width: 800px;
+            height: auto;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+            object-fit: cover;
+        }
+
+        #hero::after {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 1;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+        }
+
+        .hero-content h1 {
+            font-size: 80px;
+            font-weight: 300;
+            line-height: 1.2;
+            margin-bottom: 20px;
+        }
+
+        .hero-subtitle {
+            font-size: 20px;
+            color: #bbb;
+            margin-bottom: 30px;
+        }
+
+        .btn-contact {
+            display: inline-block;
+            padding: 15px 40px;
+            border: 2px solid #fff;
+            color: #fff;
+            text-decoration: none;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        .btn-contact:hover {
+            background: #f2cc8f;
+            color: #0a0a0a;
+        }
+
+        section {
+            padding: 40px 50px;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: 48px;
+            margin-bottom: 50px;
+            font-weight: 300;
+        }
+
+        .contact-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .contact-card {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 30px;
+            border-radius: 10px;
+            transition: transform 0.3s;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .contact-card h3 {
+            color: #f2cc8f;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .contact-card a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .projects-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-top: 50px;
+        }
+
+        .project-card {
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+            transition: transform 0.3s;
+        }
+
+        .project-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .project-chart {
+            height: 300px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .project-info {
+            padding: 30px;
+        }
+
+        .project-info h3 {
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .project-info p {
+            color: #bbb;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .project-links {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .project-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: rgba(243, 156, 18, 0.1);
+            border: 1px solid #f2cc8f;
+            color: #f2cc8f;
+            text-decoration: none;
+            border-radius: 5px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .project-link:hover {
+            background: #f2cc8f;
+            color: #0a0a0a;
+            transform: translateY(-2px);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            overflow: auto;
+        }
+
+        .modal-content {
+            position: relative;
+            margin: 50px auto;
+            width: 90%;
+            max-width: 1200px;
+            background: #1a1a1a;
+            border-radius: 10px;
+            padding: 40px;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 20px;
+            right: 30px;
+            font-size: 40px;
+            color: #fff;
+            cursor: pointer;
+            transition: color 0.3s;
+        }
+
+        .close-modal:hover {
+            color: #f39c12;
+        }
+
+        .modal h2 {
+            font-size: 36px;
+            margin-bottom: 20px;
+        }
+
+        .modal p {
+            color: #bbb;
+            line-height: 1.8;
+            margin-bottom: 30px;
+        }
+
+        .modal-chart {
+            height: 500px;
+            margin: 30px 0;
+            background: rgba(0, 0, 0, 0.3);
+            border-radius: 10px;
+        }
+
+        .skills-section {
+            background: rgba(255, 255, 255, 0.03);
+        }
+
+        #chart4 {
+            width: 100%;
+            height: 500px;
+        }
+
+        @media (max-width: 768px) {
+            .hero-content h1 {
+                font-size: 48px;
+            }
+
+            header {
+                padding: 20px;
+            }
+
+            section {
+                padding: 60px 20px;
+            }
+
+            nav a {
+                margin-left: 15px;
+                font-size: 14px;
+            }
+
+            #chart4 {
+                height: 400px;
+            }
+
+            .projects-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .modal-content {
+                padding: 20px;
+                margin: 20px;
+            }
+
+            .modal h2 {
+                font-size: 24px;
+            }
+
+            .modal-chart {
+                height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Jonathan Jacobe</div>
+        <nav>
+            <a href="#inicio">Inicio</a>
+            <a href="#contacto">Contacto</a>
+            <a href="#proyectos">Proyectos</a>
+            <a href="#habilidades">Habilidades</a>
+        </nav>
+    </header>
+
+    <section id="inicio">
+        <div id="hero">
+            <video id="particles-video" autoplay muted loop playsinline>
+                <source src="videos/video particulas.mp4" type="video/mp4">
+            </video>
+            <div class="hero-content">
+                <h1>Transformando<br>datos en<br>acción.</h1>
+                <p class="hero-subtitle">Analista de datos especializado en convertir información compleja en insights accionables para la toma de decisiones estratégicas.</p>
+                <a href="#contacto" class="btn-contact">Contacto</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="contacto">
+        <h2 class="section-title">Contacto</h2>
+        <div class="contact-info">
+            <div class="contact-card">
+                <h3>📧 Email</h3>
+                <a href="mailto:tuemail@ejemplo.com">jonathanjacobemontes@gmail.com</a>
+            </div>
+            <div class="contact-card">
+                <h3>📱 Teléfono</h3>
+                <a href="tel:+51999999999">+51 912926531</a>
+            </div>
+            <div class="contact-card">
+                <h3>💼 LinkedIn</h3>
+                <a href="https://www.linkedin.com/in/jonathanjacobemontes-/" target="_blank">linkedin.com/in/jonathanjacobemontes-</a>
+            </div>
+            <div class="contact-card">
+                <h3>🐙 GitHub</h3>
+                <a href="https://github.com/tuusuario" target="_blank">github.com/tuusuario</a>
+            </div>
+        </div>
+    </section>
+
+    <section id="proyectos">
+        <h2 class="section-title">Proyectos</h2>
+        <div class="projects-grid">
+            <div class="project-card">
+                <div id="chart1" class="project-chart"></div>
+                <div class="project-info">
+                    <h3>Análisis de Ventas</h3>
+                    <p>Dashboard interactivo que visualiza tendencias de ventas trimestrales, identificando patrones estacionales y oportunidades de crecimiento.</p>
+                    <div class="project-links">
+                        <a href="#" class="project-link" onclick="openModal('modal1'); return false;">
+                            👁️ Vista Previa
+                        </a>
+                        <a href="https://github.com/tuusuario/proyecto1" class="project-link" target="_blank">
+                            🐙 GitHub
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div id="chart2" class="project-chart"></div>
+                <div class="project-info">
+                    <h3>Predicción de Demanda</h3>
+                    <p>Modelo predictivo que anticipa la demanda de productos utilizando series temporales y machine learning.</p>
+                    <div class="project-links">
+                        <a href="#" class="project-link" onclick="openModal('modal2'); return false;">
+                            👁️ Vista Previa
+                        </a>
+                        <a href="https://github.com/tuusuario/proyecto2" class="project-link" target="_blank">
+                            🐙 GitHub
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="project-card">
+                <div id="chart3" class="project-chart"></div>
+                <div class="project-info">
+                    <h3>Segmentación de Clientes</h3>
+                    <p>Análisis de comportamiento de clientes mediante clustering, optimizando estrategias de marketing personalizadas.</p>
+                    <div class="project-links">
+                        <a href="#" class="project-link" onclick="openModal('modal3'); return false;">
+                            👁️ Vista Previa
+                        </a>
+                        <a href="https://github.com/tuusuario/proyecto3" class="project-link" target="_blank">
+                            🐙 GitHub
+                        </a>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="habilidades" class="skills-section">
+        <h2 class="section-title">Habilidades</h2>
+        <div id="chart4" style="height: 500px;"></div>
+    </section>
+
+    <!-- Modales para vista previa -->
+    <div id="modal1" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('modal1')">&times;</span>
+            <h2>Análisis de Ventas - Vista Detallada</h2>
+            <p>Este proyecto analiza las tendencias de ventas a lo largo de 6 trimestres, identificando patrones de crecimiento y estacionalidad. Utilizando técnicas de visualización avanzada, se pueden identificar oportunidades de mejora y áreas de alto rendimiento.</p>
+            <div id="modal-chart1" class="modal-chart"></div>
+            <p><strong>Tecnologías utilizadas:</strong> Python, Pandas, Plotly, Power BI</p>
+            <p><strong>Resultados:</strong> Incremento del 73% en ventas año tras año, identificación de Q4 como periodo de mayor rendimiento.</p>
+        </div>
+    </div>
+
+    <div id="modal2" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('modal2')">&times;</span>
+            <h2>Predicción de Demanda - Vista Detallada</h2>
+            <p>Modelo de machine learning que predice la demanda futura basándose en datos históricos. Implementa algoritmos de series temporales para anticipar fluctuaciones y optimizar inventario.</p>
+            <div id="modal-chart2" class="modal-chart"></div>
+            <p><strong>Tecnologías utilizadas:</strong> Python, Scikit-learn, ARIMA, Prophet, Plotly</p>
+            <p><strong>Resultados:</strong> Precisión del 94% en predicciones a 3 meses, reducción del 30% en costos de inventario.</p>
+        </div>
+    </div>
+
+    <div id="modal3" class="modal">
+        <div class="modal-content">
+            <span class="close-modal" onclick="closeModal('modal3')">&times;</span>
+            <h2>Segmentación de Clientes - Vista Detallada</h2>
+            <p>Análisis de clustering que segmenta clientes según comportamiento de compra, frecuencia y valor. Permite estrategias de marketing personalizadas para cada segmento identificado.</p>
+            <div id="modal-chart3" class="modal-chart"></div>
+            <p><strong>Tecnologías utilizadas:</strong> Python, K-means, DBSCAN, Plotly, SQL</p>
+            <p><strong>Resultados:</strong> Identificación de 4 segmentos clave, aumento del 45% en tasa de conversión con campañas segmentadas.</p>
+        </div>
+    </div>
+
+    <script>
+        // Funciones para modales
+        function openModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.style.display = 'block';
+            document.body.style.overflow = 'hidden';
+            
+            // Renderizar gráfico en el modal
+            if (modalId === 'modal1') {
+                renderModalChart1();
+            } else if (modalId === 'modal2') {
+                renderModalChart2();
+            } else if (modalId === 'modal3') {
+                renderModalChart3();
+            }
+        }
+
+        function closeModal(modalId) {
+            const modal = document.getElementById(modalId);
+            modal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        // Cerrar modal al hacer clic fuera
+        window.onclick = function(event) {
+            if (event.target.className === 'modal') {
+                event.target.style.display = 'none';
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Gráficos para modales (versiones más detalladas)
+        function renderModalChart1() {
+            const salesData = {
+                x: ['Q1 2023', 'Q2 2023', 'Q3 2023', 'Q4 2023', 'Q1 2024', 'Q2 2024'],
+                y: [45000, 52000, 48000, 67000, 71000, 78000],
+                type: 'bar',
+                marker: {
+                    color: ['#e74c3c', '#e67e22', '#f39c12', '#f1c40f', '#2ecc71', '#3498db'],
+                },
+                text: ['$45k', '$52k', '$48k', '$67k', '$71k', '$78k'],
+                textposition: 'outside'
+            };
+
+            Plotly.newPlot('modal-chart1', [salesData], {
+                title: 'Evolución de Ventas Trimestrales',
+                paper_bgcolor: 'rgba(0,0,0,0.3)',
+                plot_bgcolor: 'rgba(0,0,0,0.3)',
+                font: { color: '#fff', size: 14 },
+                margin: { t: 50, r: 30, l: 60, b: 50 },
+                xaxis: { gridcolor: 'rgba(255,255,255,0.1)', title: 'Periodo' },
+                yaxis: { gridcolor: 'rgba(255,255,255,0.1)', title: 'Ventas (USD)' }
+            }, {displayModeBar: false, responsive: true});
+        }
+
+        function renderModalChart2() {
+            const dates = [];
+            const values = [];
+            const predictions = [];
+            
+            for (let i = 0; i < 16; i++) {
+                dates.push(`Mes ${i + 1}`);
+                values.push(100 + Math.sin(i * 0.5) * 30 + Math.random() * 10);
+                if (i >= 12) {
+                    predictions.push(100 + Math.sin(i * 0.5) * 30);
+                } else {
+                    predictions.push(null);
+                }
+            }
+
+            const trace1 = {
+                x: dates,
+                y: values,
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: 'Datos Reales',
+                line: { color: '#3498db', width: 3 }
+            };
+
+            const trace2 = {
+                x: dates.slice(12),
+                y: predictions.slice(12),
+                type: 'scatter',
+                mode: 'lines+markers',
+                name: 'Predicción',
+                line: { color: '#e74c3c', width: 3, dash: 'dash' }
+            };
+
+            Plotly.newPlot('modal-chart2', [trace1, trace2], {
+                title: 'Predicción de Demanda - Serie Temporal',
+                paper_bgcolor: 'rgba(0,0,0,0.3)',
+                plot_bgcolor: 'rgba(0,0,0,0.3)',
+                font: { color: '#fff', size: 14 },
+                margin: { t: 50, r: 30, l: 60, b: 50 },
+                xaxis: { gridcolor: 'rgba(255,255,255,0.1)', title: 'Periodo' },
+                yaxis: { gridcolor: 'rgba(255,255,255,0.1)', title: 'Demanda' },
+                showlegend: true,
+                legend: { x: 0.1, y: 1 }
+            }, {displayModeBar: false, responsive: true});
+        }
+
+        function renderModalChart3() {
+            const clusters = [
+                { name: 'Cluster 1', color: '#e74c3c', x: [], y: [] },
+                { name: 'Cluster 2', color: '#f39c12', x: [], y: [] },
+                { name: 'Cluster 3', color: '#3498db', x: [], y: [] },
+                { name: 'Cluster 4', color: '#2ecc71', x: [], y: [] }
+            ];
+
+            for (let i = 0; i < 30; i++) {
+                const cluster = Math.floor(Math.random() * 4);
+                clusters[cluster].x.push(20 + cluster * 25 + Math.random() * 20);
+                clusters[cluster].y.push(30 + cluster * 20 + Math.random() * 25);
+            }
+
+            const traces = clusters.map(c => ({
+                x: c.x,
+                y: c.y,
+                mode: 'markers',
+                type: 'scatter',
+                name: c.name,
+                marker: { size: 12, color: c.color }
+            }));
+
+            Plotly.newPlot('modal-chart3', traces, {
+                title: 'Segmentación de Clientes - Análisis de Clustering',
+                paper_bgcolor: 'rgba(0,0,0,0.3)',
+                plot_bgcolor: 'rgba(0,0,0,0.3)',
+                font: { color: '#fff', size: 14 },
+                margin: { t: 50, r: 30, l: 60, b: 50 },
+                xaxis: { title: 'Frecuencia de Compra', gridcolor: 'rgba(255,255,255,0.1)' },
+                yaxis: { title: 'Valor Promedio', gridcolor: 'rgba(255,255,255,0.1)' },
+                showlegend: true
+            }, {displayModeBar: false, responsive: true});
+        }
+
+        // Gráficos Plotly originales
+        
+        // Gráfico 1: Ventas por trimestre (Barras animadas)
+        const salesData = {
+            x: ['Q1 2023', 'Q2 2023', 'Q3 2023', 'Q4 2023', 'Q1 2024', 'Q2 2024'],
+            y: [45000, 52000, 48000, 67000, 71000, 78000],
+            type: 'bar',
+            marker: {
+                color: ['#e74c3c', '#e67e22', '#f39c12', '#f1c40f', '#2ecc71', '#3498db'],
+            }
+        };
+
+        Plotly.newPlot('chart1', [salesData], {
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            font: { color: '#fff' },
+            margin: { t: 30, r: 20, l: 50, b: 40 },
+            xaxis: { gridcolor: 'rgba(255,255,255,0.1)' },
+            yaxis: { gridcolor: 'rgba(255,255,255,0.1)' }
+        }, {displayModeBar: false});
+
+        // Gráfico 2: Serie temporal (Predicción)
+        const dates = [];
+        const values = [];
+        const predictions = [];
+        
+        for (let i = 0; i < 12; i++) {
+            dates.push(`Mes ${i + 1}`);
+            values.push(100 + Math.sin(i * 0.5) * 30 + Math.random() * 10);
+            if (i >= 8) {
+                predictions.push(100 + Math.sin(i * 0.5) * 30);
+            } else {
+                predictions.push(null);
+            }
+        }
+
+        const trace1 = {
+            x: dates,
+            y: values,
+            type: 'scatter',
+            mode: 'lines+markers',
+            name: 'Real',
+            line: { color: '#3498db', width: 3 }
+        };
+
+        const trace2 = {
+            x: dates.slice(8),
+            y: predictions.slice(8),
+            type: 'scatter',
+            mode: 'lines+markers',
+            name: 'Predicción',
+            line: { color: '#e74c3c', width: 3, dash: 'dash' }
+        };
+
+        Plotly.newPlot('chart2', [trace1, trace2], {
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            font: { color: '#fff' },
+            margin: { t: 30, r: 20, l: 50, b: 40 },
+            xaxis: { gridcolor: 'rgba(255,255,255,0.1)' },
+            yaxis: { gridcolor: 'rgba(255,255,255,0.1)' },
+            showlegend: true
+        }, {displayModeBar: false});
+
+        // Gráfico 3: Scatter (Segmentación)
+        const scatterData = {
+            x: Array.from({length: 50}, () => Math.random() * 100),
+            y: Array.from({length: 50}, () => Math.random() * 100),
+            mode: 'markers',
+            type: 'scatter',
+            marker: {
+                size: 12,
+                color: Array.from({length: 50}, () => Math.floor(Math.random() * 4)),
+                colorscale: [[0, '#e74c3c'], [0.33, '#f39c12'], [0.66, '#3498db'], [1, '#2ecc71']],
+                showscale: false
+            }
+        };
+
+        Plotly.newPlot('chart3', [scatterData], {
+            paper_bgcolor: 'rgba(0,0,0,0)',
+            plot_bgcolor: 'rgba(0,0,0,0)',
+            font: { color: '#fff' },
+            margin: { t: 30, r: 20, l: 50, b: 40 },
+            xaxis: { title: 'Frecuencia', gridcolor: 'rgba(255,255,255,0.1)' },
+            yaxis: { title: 'Valor', gridcolor: 'rgba(255,255,255,0.1)' }
+        }, {displayModeBar: false});
+
+        // Gráfico 4: Habilidades (Radar)
+        const skillsData = {
+            type: 'scatterpolar',
+            r: [90, 85, 88, 92, 87, 95, 89],
+            theta: ['Python', 'SQL', 'Power BI', 'Excel', 'Machine Learning', 'Estadística', 'DAX'],
+            fill: 'toself',
+            marker: { color: '#f39c12' },
+            line: { color: '#f39c12' }
+        };
+
+        function createSkillsChart() {
+            const isMobile = window.innerWidth < 768;
+            
+            Plotly.newPlot('chart4', [skillsData], {
+                paper_bgcolor: 'rgba(0,0,0,0)',
+                plot_bgcolor: 'rgba(0,0,0,0)',
+                font: { 
+                    color: '#fff', 
+                    size: isMobile ? 10 : 14 
+                },
+                polar: {
+                    radialaxis: {
+                        visible: true,
+                        range: [0, 100],
+                        gridcolor: 'rgba(255,255,255,0.1)'
+                    },
+                    angularaxis: {
+                        gridcolor: 'rgba(255,255,255,0.1)'
+                    },
+                    bgcolor: 'rgba(0,0,0,0)'
+                },
+                margin: { 
+                    t: isMobile ? 30 : 50, 
+                    r: isMobile ? 40 : 80, 
+                    l: isMobile ? 40 : 80, 
+                    b: isMobile ? 30 : 50 
+                }
+            }, {
+                displayModeBar: false,
+                responsive: true
+            });
+        }
+
+        createSkillsChart();
+
+        // Recrear el gráfico cuando cambie el tamaño de la ventana
+        let resizeTimeout;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimeout);
+            resizeTimeout = setTimeout(() => {
+                createSkillsChart();
+            }, 250);
+        });
+
+        // Smooth scroll
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                const target = document.querySelector(this.getAttribute('href'));
+                target.scrollIntoView({ behavior: 'smooth' });
+            });
+        });
+    </script>
+</body>
+</html>
