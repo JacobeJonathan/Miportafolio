@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Data2Insights</title>
+    <title>JonathanJacobe</title>
     <link rel="icon" type="image/png" href="image/logo.png">
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/plotly.js/2.26.0/plotly.min.js"></script>
@@ -31,10 +31,10 @@
             </video>
             <div class="hero-content">
                 <h1>Transformando<br>datos en<br>acción.</h1>
-                <p class="hero-subtitle">Analista de datos especializado en convertir información compleja en insights accionables para la toma de decisiones estratégicas.</p>
+                <p class="hero-subtitle">Ingeniero de datos especializado en convertir información compleja en insights accionables para la toma de decisiones estratégicas.</p>
                 <div class="hero-buttons">
                     <a href="#contacto" class="btn-contact">Contacto</a>
-                    <a href="https://wa.me/51912926531?text=Hola%20Jonathan%2C%20me%20interesa%20saber%20m%C3%A1s%20sobre%20tus%20servicios" class="btn-whatsapp" target="_blank">
+                    <a href="https://wa.me/51912926531?text=Hola%20Jonathan%2C%20me%20interesa%20saber%20m%C3%A1s%20sobre%20tus%20servicios" class="btn-whatsapp" target="_blank" rel="noopener noreferrer">
                         <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24">
                             <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
                         </svg>
@@ -45,24 +45,108 @@
         </div>
     </section>
 
+    <canvas id="scene" aria-hidden="true"></canvas>
+
     <section id="contacto">
         <h2 class="section-title">Contacto</h2>
-        <div class="contact-info">
-            <div class="contact-card">
-                <h3>📧 Email</h3>
-                <a href="mailto:jonathanjacobemontes@gmail.com">jonathanjacobemontes@gmail.com</a>
+        <div class="contact-grid">
+            <a class="contact-card" href="mailto:jonathanjacobemontes@gmail.com">
+                <span class="contact-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="5" width="18" height="14" rx="2"></rect>
+                        <path d="M3 7l9 6 9-6"></path>
+                    </svg>
+                </span>
+                <span class="contact-text">
+                    <span class="contact-label">Email</span>
+                    <span class="contact-value">jonathanjacobemontes@gmail.com</span>
+                </span>
+            </a>
+
+            <a class="contact-card" href="https://wa.me/51912926531?text=Hola%20Jonathan%2C%20me%20interesa%20saber%20m%C3%A1s%20sobre%20tus%20servicios" target="_blank" rel="noopener noreferrer">
+                <span class="contact-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M20 12a8 8 0 1 1-3.6-6.66"></path>
+                        <path d="M20 4l-4.2 7.2L20 12l-8-1.5"></path>
+                    </svg>
+                </span>
+                <span class="contact-text">
+                    <span class="contact-label">WhatsApp</span>
+                    <span class="contact-value">Escríbeme directo</span>
+                </span>
+            </a>
+
+            <a class="contact-card" href="https://www.youtube.com/channel/UCtUEHRtIiWgZXo-fHJTNrtA" target="_blank" rel="noopener noreferrer">
+                <span class="contact-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2.5" y="6" width="19" height="12" rx="4"></rect>
+                        <path d="M11 9.5v5l4-2.5-4-2.5z" fill="currentColor" stroke="none"></path>
+                    </svg>
+                </span>
+                <span class="contact-text">
+                    <span class="contact-label">YouTube</span>
+                    <span class="contact-value">Youtube jonathanjacobe</span>
+                </span>
+            </a>
+
+            <a class="contact-card" href="https://www.linkedin.com/in/jonathanjacobemontes-/" target="_blank" rel="noopener noreferrer">
+                <span class="contact-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="3" width="18" height="18" rx="3"></rect>
+                        <line x1="7.5" y1="10" x2="7.5" y2="17"></line>
+                        <circle cx="7.5" cy="6.8" r="0.9" fill="currentColor" stroke="none"></circle>
+                        <path d="M11.5 17v-4.2c0-1.6 1-2.5 2.3-2.5 1.3 0 2.2 0.9 2.2 2.5V17"></path>
+                    </svg>
+                </span>
+                <span class="contact-text">
+                    <span class="contact-label">LinkedIn</span>
+                    <span class="contact-value">linkedin.com/in/jonathanjacobemontes-</span>
+                </span>
+            </a>
+
+            <a class="contact-card" href="https://calendly.com/jonathanjacobemontes/30min" target="_blank" rel="noopener noreferrer">
+                <span class="contact-icon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="2.5" y="6.5" width="13" height="11" rx="2.2"></rect>
+                        <path d="M15.5 10.5l5-3v9l-5-3z"></path>
+                    </svg>
+                </span>
+                <span class="contact-text">
+                    <span class="contact-label">Zoom</span>
+                    <span class="contact-value">Agéndame una reunión</span>
+                </span>
+            </a>
+        </div>
+
+        <div class="sql-demo" aria-labelledby="sqlDemoTitle">
+            <div class="sql-panel sql-table-panel">
+                <p class="sql-table-title" id="sqlDemoTitle">tbl. Empleados</p>
+                <div class="sql-table-scroll">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th scope="col">Código</th>
+                                <th scope="col">MejorEmpleado</th>
+                                <th scope="col">Apellido</th>
+                                <th scope="col">CorreoElectrónico</th>
+                            </tr>
+                        </thead>
+                        <tbody id="resultBody">
+                            <tr class="empty-row">
+                                <td colspan="4">Presiona EJECUTAR para ver los resultados</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
-            <div class="contact-card">
-                <h3>📹 Youtube</h3>
-                <a href="https://www.youtube.com/channel/UCtUEHRtIiWgZXo-fHJTNrtA" target="_blank">Youtube jonathanjacobe</a>
-            </div>
-            <div class="contact-card">
-                <h3>💼 LinkedIn</h3>
-                <a href="https://www.linkedin.com/in/jonathanjacobemontes-/" target="_blank">linkedin.com/in/jonathanjacobemontes-</a>
-            </div>
-            <div class="contact-card">
-                <h3>🧑‍💻 Zoom</h3>
-                <a href="https://calendly.com/jonathanjacobemontes/30min" target="_blank">Agendame una reunión</a>
+
+            <div class="sql-panel sql-query-panel">
+                <pre class="sql-query-code"><span class="kw">SELECT</span>  <span class="field">ID</span> <span class="kw">AS</span> <span class="alias">Codigo</span>,  <span class="field">Nombre</span> <span class="kw">AS</span> <span class="alias">MejorEmpleado</span>,
+        <span class="field">ApellidoPaterno</span> <span class="kw">AS</span> <span class="alias">Apellido</span>,
+        <span class="field">Correo</span> <span class="kw">AS</span> <span class="alias">CorreoElectronico</span>
+<span class="kw">FROM</span> TBL.Empleados;</pre>
+                <button class="run-btn" id="runBtn" type="button">EJECUTAR</button>
+                <div class="status" id="sqlStatus" aria-live="polite"></div>
             </div>
         </div>
     </section>
@@ -121,8 +205,34 @@
     </section>
 
     <section id="habilidades" class="skills-section">
-        <h2 class="section-title">Habilidades</h2>
-        <div id="chart4" style="height: 500px;"></div>
+        <h2 class="section-title skills-title">Habilidades</h2>
+        <div class="skills-grid">
+            <div class="panel code-panel">
+                <pre class="query-code" id="pyCode"><span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+categorias = [<span class="str">'Power BI'</span>, <span class="str">'SQL'</span>, <span class="str">'Python'</span>, <span class="str">'DAX'</span>,
+              <span class="str">'Estadística'</span>, <span class="str">'IA'</span>, <span class="str">'Excel'</span>]
+valores = [92, 85, 97, 62, 88, 65, 90]
+
+angulos = np.linspace(0, 2*np.pi, len(categorias), endpoint=<span class="kw">False</span>)
+
+fig = plt.figure()
+ax = fig.add_subplot(polar=<span class="kw">True</span>)
+ax.plot(angulos, valores, color=<span class="str">COLOR</span>)
+ax.fill(angulos, valores, color=<span class="str">COLOR</span>, alpha=0.6)
+ax.set_xticks(angulos)
+ax.set_xticklabels(categorias)
+
+plt.show()</pre>
+                <button class="run-btn" id="skillsBtn" type="button">EJECUTAR</button>
+                <div class="status" id="skillsStatus" aria-live="polite">gráfico renderizado — color: <span id="colorName">ámbar</span></div>
+            </div>
+
+            <div class="panel chart-panel">
+                <svg id="radarSvg" viewBox="0 0 400 400" role="img" aria-label="Gráfico radar de habilidades en Power BI, SQL, Python, DAX, Estadística, IA y Excel"></svg>
+            </div>
+        </div>
     </section>
 
     <div id="modal1" class="modal">

@@ -215,64 +215,329 @@ Plotly.newPlot('chart3', [scatterData], {
     yaxis: { title: 'Valor', gridcolor: 'rgba(255,255,255,0.1)' }
 }, {displayModeBar: false});
 
-// Gráfico 4: Habilidades (Radar)
-const skillsData = {
-    type: 'scatterpolar',
-    r: [90, 85, 88, 92, 87, 95, 89],
-    theta: ['Python', 'SQL', 'Power BI', 'Excel', 'IA', 'Estadística', 'DAX'],
-    fill: 'toself',
-    marker: { color: '#f39c12' },
-    line: { color: '#f39c12' }
-};
+// Gráfico de habilidades basado en el SVG interactivo del diseño de referencia
+const skillLabels = ['Power BI', 'SQL', 'Python', 'DAX', 'Estadística', 'IA', 'Excel'];
+const skillValues = [92, 85, 97, 62, 88, 65, 90];
+const skillPalette = [
+    { hex: '#d9a05b', name: 'ámbar' },
+    { hex: '#6fe3bb', name: 'menta' },
+    { hex: '#8b7fe8', name: 'violeta' },
+    { hex: '#e8708f', name: 'coral' },
+    { hex: '#5fb8e8', name: 'celeste' }
+];
+let skillColorIndex = 0;
 
-function createSkillsChart() {
-    const isMobile = window.innerWidth < 768;
+const svgNamespace = 'http://www.w3.org/2000/svg';
+const radarSvg = document.getElementById('radarSvg');
+const radarCenterX = 200;
+const radarCenterY = 200;
+const radarMaxRadius = 150;
 
-    Plotly.newPlot('chart4', [skillsData], {
-        paper_bgcolor: 'rgba(0,0,0,0)',
-        plot_bgcolor: 'rgba(0,0,0,0)',
-        font: {
-            color: '#fff',
-            size: isMobile ? 10 : 14
-        },
-        polar: {
-            radialaxis: {
-                visible: true,
-                range: [0, 100],
-                gridcolor: 'rgba(255,255,255,0.1)'
-            },
-            angularaxis: {
-                gridcolor: 'rgba(255,255,255,0.1)'
-            },
-            bgcolor: 'rgba(0,0,0,0)'
-        },
-        margin: {
-            t: isMobile ? 30 : 50,
-            r: isMobile ? 40 : 80,
-            l: isMobile ? 40 : 80,
-            b: isMobile ? 30 : 50
+function polarPoint(index, valueFraction) {
+    const angle = (-90 + index * (360 / skillLabels.length)) * Math.PI / 180;
+    const radius = radarMaxRadius * valueFraction;
+
+    return {
+        x: radarCenterX + radius * Math.cos(angle),
+        y: radarCenterY + radius * Math.sin(angle)
+    };
+}
+
+function buildRadar() {
+    radarSvg.innerHTML = '';
+
+    [0.2, 0.4, 0.6, 0.8, 1].forEach(fraction => {
+        const circle = document.createElementNS(svgNamespace, 'circle');
+        circle.setAttribute('cx', radarCenterX);
+        circle.setAttribute('cy', radarCenterY);
+        circle.setAttribute('r', radarMaxRadius * fraction);
+        circle.setAttribute('class', 'radar-grid-ring');
+        radarSvg.appendChild(circle);
+    });
+
+    skillLabels.forEach((label, index) => {
+        const point = polarPoint(index, 1);
+        const line = document.createElementNS(svgNamespace, 'line');
+        line.setAttribute('x1', radarCenterX);
+        line.setAttribute('y1', radarCenterY);
+        line.setAttribute('x2', point.x);
+        line.setAttribute('y2', point.y);
+        line.setAttribute('class', 'radar-grid-line');
+        radarSvg.appendChild(line);
+
+        const labelRadius = radarMaxRadius + 18;
+        const angle = (-90 + index * (360 / skillLabels.length)) * Math.PI / 180;
+        const text = document.createElementNS(svgNamespace, 'text');
+        text.setAttribute('x', radarCenterX + labelRadius * Math.cos(angle));
+        text.setAttribute('y', radarCenterY + labelRadius * Math.sin(angle));
+        text.setAttribute('text-anchor', Math.abs(Math.cos(angle)) < 0.15 ? 'middle' : (Math.cos(angle) > 0 ? 'start' : 'end'));
+        text.setAttribute('dominant-baseline', 'middle');
+        text.setAttribute('class', 'radar-label');
+        text.textContent = label;
+        radarSvg.appendChild(text);
+    });
+
+    [0, 20, 40, 60, 80, 100].forEach(value => {
+        const tick = document.createElementNS(svgNamespace, 'text');
+        tick.setAttribute('x', radarCenterX + radarMaxRadius * (value / 100));
+        tick.setAttribute('y', radarCenterY + 14);
+        tick.setAttribute('text-anchor', 'middle');
+        tick.setAttribute('class', 'radar-tick');
+        tick.textContent = value;
+        radarSvg.appendChild(tick);
+    });
+
+    const group = document.createElementNS(svgNamespace, 'g');
+    group.setAttribute('id', 'radarGroup');
+    group.setAttribute('class', 'radar-fill');
+
+    const points = skillValues.map((value, index) => polarPoint(index, value / 100));
+    const polygon = document.createElementNS(svgNamespace, 'polygon');
+    polygon.setAttribute('points', points.map(point => `${point.x},${point.y}`).join(' '));
+    polygon.setAttribute('fill', skillPalette[skillColorIndex].hex);
+    polygon.setAttribute('fill-opacity', '0.55');
+    polygon.setAttribute('stroke', skillPalette[skillColorIndex].hex);
+    polygon.setAttribute('stroke-width', '2');
+    polygon.setAttribute('id', 'radarPoly');
+    group.appendChild(polygon);
+
+    points.forEach(point => {
+        const dot = document.createElementNS(svgNamespace, 'circle');
+        dot.setAttribute('cx', point.x);
+        dot.setAttribute('cy', point.y);
+        dot.setAttribute('r', 4);
+        dot.setAttribute('fill', skillPalette[skillColorIndex].hex);
+        dot.setAttribute('class', 'radar-dot');
+        group.appendChild(dot);
+    });
+
+    radarSvg.appendChild(group);
+}
+
+buildRadar();
+
+const skillsButton = document.getElementById('skillsBtn');
+const skillsStatus = document.getElementById('skillsStatus');
+
+skillsButton.addEventListener('click', () => {
+    skillsButton.disabled = true;
+    skillsStatus.textContent = 'ejecutando script...';
+
+    setTimeout(() => {
+        skillColorIndex = (skillColorIndex + 1) % skillPalette.length;
+        const selectedColor = skillPalette[skillColorIndex];
+        const radarGroup = document.getElementById('radarGroup');
+        const radarPolygon = document.getElementById('radarPoly');
+
+        radarPolygon.setAttribute('fill', selectedColor.hex);
+        radarPolygon.setAttribute('stroke', selectedColor.hex);
+        document.querySelectorAll('.radar-dot').forEach(dot => dot.setAttribute('fill', selectedColor.hex));
+
+        radarGroup.classList.remove('spin');
+        void radarGroup.getBoundingClientRect();
+        radarGroup.classList.add('spin');
+
+        skillsStatus.textContent = `gráfico renderizado — color: ${selectedColor.name}`;
+        skillsButton.disabled = false;
+    }, 500);
+});
+
+// Fondo de partículas y montaña para Contacto, Proyectos y Habilidades
+const sceneCanvas = document.getElementById('scene');
+const sceneContext = sceneCanvas.getContext('2d');
+const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+const sceneColumns = 84;
+const sceneRows = 30;
+let sceneWidth;
+let sceneHeight;
+let sceneTime = 0;
+let scenePulse = 0;
+let sceneStars = [];
+let sceneAnimationId;
+
+function buildSceneStars() {
+    const count = Math.floor((sceneWidth * sceneHeight) / 6500);
+    sceneStars = [];
+
+    for (let index = 0; index < count; index++) {
+        const centerX = sceneWidth * 0.5;
+        const spread = sceneWidth * 0.42;
+        sceneStars.push({
+            x: centerX + (Math.random() - 0.5) * 2 * spread + (Math.random() - 0.5) * sceneWidth * 0.15,
+            y: sceneHeight * 0.1 + Math.random() * sceneHeight * 0.5,
+            radius: Math.random() * Math.random() * 2.6 + 0.4,
+            phase: Math.random() * Math.PI * 2,
+            speed: 0.35 + Math.random() * 0.9
+        });
+    }
+}
+
+function resizeScene() {
+    const pixelRatio = Math.min(window.devicePixelRatio || 1, 2);
+    sceneWidth = window.innerWidth;
+    sceneHeight = window.innerHeight;
+    sceneCanvas.width = sceneWidth * pixelRatio;
+    sceneCanvas.height = sceneHeight * pixelRatio;
+    sceneCanvas.style.width = `${sceneWidth}px`;
+    sceneCanvas.style.height = `${sceneHeight}px`;
+    sceneContext.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    buildSceneStars();
+    drawScene();
+}
+
+function sceneElevation(x, y, time) {
+    return (
+        Math.sin(x * 1.05 + time * 0.55) * 0.42 +
+        Math.sin(x * 2.1 - time * 0.35 + y * 1.6) * 0.22 +
+        Math.sin(y * 1.9 + time * 0.45) * 0.30 +
+        Math.exp(-Math.pow((x - 0.60) * 3.4, 2)) * 1.55 +
+        Math.exp(-Math.pow((x - 1.18) * 3.4, 2)) * 1.20
+    );
+}
+
+function scenePoint(column, row, mountainHeight) {
+    const horizontal = column / sceneColumns;
+    const vertical = row / sceneRows;
+    const depth = 1 - vertical;
+    const elevation = sceneElevation(horizontal * 3.2, vertical * 2.3, sceneTime) * (0.5 + depth * 0.5);
+    const sceneSpanX = sceneWidth * 1.08;
+
+    return {
+        x: sceneWidth * 0.5 - sceneSpanX * 0.5 + horizontal * sceneSpanX,
+        y: sceneHeight * 0.46 + vertical * sceneHeight * 0.52 * 0.72 - elevation * mountainHeight * (0.32 + vertical * 0.75),
+        depth
+    };
+}
+
+function drawScene() {
+    sceneContext.clearRect(0, 0, sceneWidth, sceneHeight);
+    sceneContext.fillStyle = '#f2f2f2';
+    const mountainHeight = sceneHeight * 0.30 + scenePulse * 20;
+
+    sceneStars.forEach(star => {
+        sceneContext.globalAlpha = 0.5 + 0.5 * Math.sin(sceneTime * star.speed + star.phase);
+        sceneContext.beginPath();
+        sceneContext.arc(star.x, star.y, star.radius, 0, Math.PI * 2);
+        sceneContext.fill();
+    });
+
+    sceneContext.fillStyle = '#f5f5f5';
+    for (let row = 0; row <= sceneRows; row++) {
+        for (let column = 0; column <= sceneColumns; column++) {
+            const point = scenePoint(column, row, mountainHeight);
+            sceneContext.globalAlpha = 0.3 + point.depth * 0.6;
+            sceneContext.beginPath();
+            sceneContext.arc(point.x, point.y, 0.55 + point.depth * 1.25, 0, Math.PI * 2);
+            sceneContext.fill();
         }
-    }, {
-        displayModeBar: false,
-        responsive: true
+
+        sceneContext.globalAlpha = 0.14 + (1 - row / sceneRows) * 0.32;
+        sceneContext.strokeStyle = 'rgba(255,255,255,0.55)';
+        sceneContext.lineWidth = 1;
+        sceneContext.beginPath();
+        for (let column = 0; column <= sceneColumns; column++) {
+            const point = scenePoint(column, row, mountainHeight);
+            if (column === 0) sceneContext.moveTo(point.x, point.y);
+            else sceneContext.lineTo(point.x, point.y);
+        }
+        sceneContext.stroke();
+    }
+
+    sceneContext.globalAlpha = 0.16;
+    sceneContext.strokeStyle = 'rgba(255,255,255,0.55)';
+    for (let column = 0; column <= sceneColumns; column += 2) {
+        sceneContext.beginPath();
+        for (let row = 0; row <= sceneRows; row++) {
+            const point = scenePoint(column, row, mountainHeight);
+            if (row === 0) sceneContext.moveTo(point.x, point.y);
+            else sceneContext.lineTo(point.x, point.y);
+        }
+        sceneContext.stroke();
+    }
+    sceneContext.globalAlpha = 1;
+
+    if (scenePulse > 0.01) scenePulse *= 0.94;
+    else scenePulse = 0;
+}
+
+function animateScene() {
+    sceneTime += 0.012;
+    drawScene();
+    sceneAnimationId = requestAnimationFrame(animateScene);
+}
+
+function startSceneAnimation() {
+    if (!reduceMotion && !document.hidden && !sceneAnimationId) {
+        sceneAnimationId = requestAnimationFrame(animateScene);
+    }
+}
+
+function stopSceneAnimation() {
+    if (sceneAnimationId) {
+        cancelAnimationFrame(sceneAnimationId);
+        sceneAnimationId = undefined;
+    }
+}
+
+function pulseScene() {
+    if (reduceMotion) return;
+    scenePulse = 1;
+    startSceneAnimation();
+}
+
+window.addEventListener('resize', resizeScene);
+document.addEventListener('visibilitychange', () => {
+    if (document.hidden) stopSceneAnimation();
+    else startSceneAnimation();
+});
+
+resizeScene();
+startSceneAnimation();
+
+// Demostración SQL interactiva de la sección Contacto
+const sqlEmployees = [
+    { id: 1, nombre: 'Jonathan', apellido: 'Jacobe', correo: 'jonathanjacobemontes@gmail.com' }
+];
+const sqlRunButton = document.getElementById('runBtn');
+const sqlResultBody = document.getElementById('resultBody');
+const sqlStatus = document.getElementById('sqlStatus');
+
+if (sqlRunButton && sqlResultBody && sqlStatus) {
+    sqlRunButton.addEventListener('click', () => {
+        sqlRunButton.disabled = true;
+        sqlStatus.textContent = 'ejecutando consulta...';
+
+        setTimeout(() => {
+            sqlResultBody.replaceChildren();
+
+            sqlEmployees.forEach((employee, index) => {
+                const row = document.createElement('tr');
+                row.className = 'row-in';
+                row.style.animationDelay = `${index * 90}ms`;
+
+                [employee.id, employee.nombre, employee.apellido, employee.correo].forEach(value => {
+                    const cell = document.createElement('td');
+                    cell.textContent = value;
+                    row.appendChild(cell);
+                });
+
+                sqlResultBody.appendChild(row);
+            });
+
+            sqlStatus.textContent = `${sqlEmployees.length} fila(s) devuelta(s)`;
+            sqlRunButton.disabled = false;
+            pulseScene();
+        }, 550);
     });
 }
 
-createSkillsChart();
-
-let resizeTimeout;
-window.addEventListener('resize', () => {
-    clearTimeout(resizeTimeout);
-    resizeTimeout = setTimeout(() => {
-        createSkillsChart();
-    }, 250);
-});
-
 // Smooth scroll
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+document.querySelectorAll('a[href^="#"]:not([href="#"])').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
-        e.preventDefault();
         const target = document.querySelector(this.getAttribute('href'));
+        if (!target) return;
+
+        e.preventDefault();
         target.scrollIntoView({ behavior: 'smooth' });
 
         const navMenu = document.getElementById('navMenu');
